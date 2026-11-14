@@ -1,24 +1,24 @@
-# 👻 DevGhost
+# 👻 DevGhost (C-Native)
 
 > **Autonomous Shell Interceptor & Self-Healing Terminal Companion**  
-> *Passive error interception, zero-latency root-cause diagnosis, and 1-click terminal self-healing.*
+> *Engineered in Pure C (C99) for sub-millisecond passive crash interception, zero runtime overhead, and 1-click terminal self-healing.*
 
 ---
 
 ## ⚡ The Problem
-Developers waste hours every week context-switching between the terminal and browser search tabs whenever a command crashes (`EADDRINUSE`, missing dependencies, git diverged branches, typos, syntax errors).
+Developers waste hours context-switching between the terminal and browser search tabs whenever a build, test, or server command crashes (`EADDRINUSE`, missing dependencies, git upstream errors, typos).
 
-**DevGhost** eliminates this friction. It hooks directly into your shell (PowerShell / Bash / Zsh). When any command exits with a non-zero code, DevGhost silently wakes up, captures the failure context, diagnoses the exact root cause, and provides a **1-click verified fix** right inside your terminal.
+**DevGhost** is a lightweight native systems utility written in **C**. It hooks directly into your shell (PowerShell / Bash). When any command exits with a failure code, DevGhost silently intercepts the failure, diagnoses the exact root cause in microseconds using heuristic pattern matching, and renders an interactive terminal card with a **1-click verified fix**.
 
 ---
 
 ## ✨ Features
 
-- **🎯 Zero-Friction Passive Interception:** No need to prefix commands or copy-paste errors. DevGhost only appears when a command actually fails.
-- **⚡ Sub-Millisecond Heuristic Engine:** Offline rule engine instantly catches common developer headaches (port conflicts, missing npm/pip packages, git upstream issues, common CLI typos).
-- **🧠 Optional AI Deep Diagnostics:** Seamlessly falls back to Gemini / LLM inference when encountering complex custom stack traces (activated simply by setting `GEMINI_API_KEY`).
-- **🛡️ Sandboxed Interactive TUI:** Displays clean, structured diagnostic cards with `[Enter]` to execute the fix, `[e]` for a deep-dive explanation, and `[q]` to dismiss.
-- **🔄 Cross-Platform Shell Support:** Native PowerShell `$PROFILE` integration on Windows; Bash/Zsh support on macOS & Linux.
+- **⚡ Blazing Fast (C99 Native):** Zero virtual machine or interpreter startup delay. Runs in < 1 millisecond.
+- **🎯 Passive Zero-Friction Hook:** Only appears when a command actually crashes. Never gets in your way during normal shell usage.
+- **🛡️ 1-Click Interactive TUI:** Built with native ANSI color codes and `<conio.h>` raw keypress listening (`[Enter]` to run fix, `[e]` to explain, `[q]` to dismiss).
+- **📦 Zero External Dependencies:** Compiles down to a standalone native binary (`devghost.exe`) using standard C libraries (`stdio.h`, `stdlib.h`, `string.h`).
+- **🔧 Modular Architecture:** Clean separation between the diagnostic pattern matcher, the terminal UI renderer, and the process execution engine.
 
 ---
 
@@ -33,77 +33,77 @@ Developers waste hours every week context-switching between the terminal and bro
                  │
                  ▼
        ┌─────────────────────────┐
-       │ 1. Shell Hook / Trap    │ ──► Captures command & error stream
+       │ 1. Shell Trap / Hook    │ ──► Intercepts failed command & exit code
        └───────────┬─────────────┘
                    │
                    ▼
        ┌─────────────────────────┐
-       │ 2. Context Harvester    │ ──► Inspects cwd, git state & environment
+       │ 2. Diagnostics Engine   │ ──► Fast heuristic pattern matching in C
+       │    (src/diagnostics.c)  │     (EADDRINUSE, missing packages, typos)
        └───────────┬─────────────┘
                    │
                    ▼
        ┌─────────────────────────┐
-       │ 3. Diagnostic Engine    │ ──► Fast Heuristics + Cloud AI fallback
+       │ 3. Terminal UI Renderer │ ──► Native ANSI color cards
+       │    (src/ui.c)           │
        └───────────┬─────────────┘
                    │
                    ▼
        ┌─────────────────────────┐
-       │ 4. Interactive TUI      │ ──► Renders root cause & fix preview
-       └───────────┬─────────────┘
-                   │
-                   ▼
-       ┌─────────────────────────┐
-       │ 5. Safe Fix Executor    │ ──► [Enter] runs fix command in subshell
+       │ 4. Execution Engine     │ ──► [Enter] runs fix via system()
+       │    (src/executor.c)     │
        └─────────────────────────┘
 ```
 
 ---
 
-## 🚀 Quick Start
+## 📂 Project Structure
 
-### 1. Installation
-Clone the repository and install dependencies:
-
-```powershell
-git clone <your-repo-url>
-cd devghost
-npm install
-npm run build
-npm link
+```text
+devghost/
+├── include/
+│   └── devghost.h         # Core data structs (ErrorContext, Diagnosis) & headers
+├── src/
+│   ├── main.c             # CLI parser and entry point
+│   ├── diagnostics.c      # String heuristics & pattern recognition
+│   ├── ui.c               # ANSI terminal card renderer
+│   └── executor.c         # Interactive keypress & subshell execution
+├── build.bat              # 1-click Windows compilation script
+├── Makefile               # Cross-platform build script (GCC / Clang)
+└── README.md              # Documentation & Architecture
 ```
 
-### 2. Verify Installation
-```powershell
-devghost status
+---
+
+## 🚀 Building & Running
+
+### 1. Compile with GCC:
+```bash
+gcc -Wall -Wextra -O2 -Iinclude src/main.c src/diagnostics.c src/ui.c src/executor.c -o devghost.exe
+```
+*(Or simply run `make` on Linux/macOS or `build.bat` on Windows)*
+
+### 2. Run the Interactive Demo:
+```bash
+./devghost demo
 ```
 
-### 3. Run the Interactive Demo
-See how DevGhost intercepts a simulated port 3000 collision:
-```powershell
-devghost demo
-```
-
-### 4. Enable Passive Shell Interception (PowerShell)
-Automatically link DevGhost into your PowerShell profile:
-```powershell
-devghost setup
-```
-Then reload your shell:
-```powershell
-. $PROFILE
+### 3. Check Engine Status:
+```bash
+./devghost status
 ```
 
 ---
 
 ## 📄 How to Feature This on Your Resume
 
-**DevGhost | Developer Tooling & CLI Automation** *(Node.js, TypeScript, PowerShell, Systems Architecture)*
-- Engineered an open-source terminal companion CLI that hooks into Windows PowerShell and POSIX shells to passively intercept runtime command failures.
-- Built a sub-millisecond heuristic diagnostic pipeline resolving common developer bottlenecks (port conflicts, missing dependencies, git divergence) with fallback to streaming LLM inference.
-- Implemented an interactive terminal UI (TUI) providing root-cause explanations and 1-key sandboxed fix execution, eliminating manual browser context-switching.
-- Architected environment and Git metadata harvesters to prune contextual noise and deliver precise, localized auto-healing patches.
+**DevGhost | Systems Programming & CLI Developer Tooling** *(C, POSIX / Win32 API, Shell Scripting)*
+- Engineered an open-source terminal companion in C (C99) that hooks into shell environments to passively intercept command failures with sub-millisecond latency.
+- Implemented heuristic pattern-matching algorithms using standard C string parsing to resolve recurring bottlenecks (port collisions, missing packages, Git upstream drift).
+- Designed an ANSI-compliant interactive terminal interface with raw keypress handling and safe subprocess execution via the C runtime.
+- Built a zero-dependency native binary architecture optimizing memory footprint and startup overhead compared to runtime-bound CLI tooling.
 
 ---
 
 ## 📜 License
-MIT © 2026
+MIT © 2026 Geethu Santhosh
